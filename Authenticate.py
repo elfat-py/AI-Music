@@ -3,7 +3,9 @@ from pytube.exceptions import AgeRestrictedError
 from google_auth_oauthlib.flow import InstalledAppFlow
 #from google.auth.transport.requests import Request
 
-class YouTubeMusicPlayer:
+
+#This one still needs plenty of work
+class YouTubeMusicDownload:
     def __init__(self):
         self.credentials = None # We let it to none at the beggining because there might be no need for authentication that will shorten the time needed for downloading the vid
 
@@ -23,8 +25,9 @@ class YouTubeMusicPlayer:
             print(yt.title)
             stream = yt.streams.filter(only_audio=True).first()
             stream.download()
-        except AgeRestrictedError:
+        except AgeRestrictedError: #This is a case we can't directly handle since there is going to need another step of authentication
             print("This video is age-restricted.")
 
-vid1 = YouTubeMusicPlayer()
-vid1.download_audio("https://www.youtube.com/watch?v=pVjdMQ_iAh0&list=RDMM&index=21&ab_channel=GANGSTERGANG")#This should be the link to the song
+#vid1 = YouTubeMusicDownload()
+#vid1.download_audio("https://www.youtube.com/watch?v=pVjdMQ_iAh0&list=RDMM&index=21&ab_channel=GANGSTERGANG")#This should be the link to the song
+
