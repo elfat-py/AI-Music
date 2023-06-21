@@ -1,10 +1,16 @@
 from openAiAPI import *
 from saveData import save_current_mood,  save_current_input, load_previous_input
 from googleAPI import YouTubeAPI
+from authDownload import *
+from googleapiclient.discovery import build
+import requests
+import io
+from pydub import AudioSegment
+from pydub.playback import play
 
 # Main interaction loop
 def main():
-    api_key_you_tube = 'AIzaSyDqMERs1kaVME3xDDjg9Zd9S67Tf12yjdw'
+    api_key_you_tube = 'AIzaSyAmuxK_HoCBpxflYdGd0CDY5DSoNlDjgjw'
 
     premium = False
 
@@ -34,8 +40,13 @@ def main():
     print("AI decision: " + mood)
     save_current_mood(mood)
 
-    #googleAPI = YouTubeAPI(api_key_you_tube)
-    #googleAPI.search_for_video(user_input)
+    googleAPI = YouTubeAPI(api_key_you_tube)
+    googleAPI.search_for_video(user_input)
+    #googleAPI.get_video_ids()
+
+    #userVideo = YouTubeMusicDownload()
+    #userVideo.download_audio([f'https://www.youtube.com/watch?v={video_id}')
+
 
 # Run the program
 if __name__ == "__main__":
