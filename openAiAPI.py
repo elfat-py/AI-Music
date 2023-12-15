@@ -1,48 +1,33 @@
-import openai
 
-# OpenAI API key
-openai.api_key = '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'
 
-def generate_response(user_input):
-    response = openai.Completion.create(
-        engine ='text-davinci-003',  # Use the ChatGPT 3.5 turbo engine, text-davinci-003
-        prompt =user_input,
-        max_tokens=50,  # Adjust the max tokens according to your needs(nr of words)
-        temperature=0.7,  #Temperature (0-2) is a parameter that will tell us how random we want the output, (ex. greater values more random the input)
-        n=1, #The number of returned (outputs we want to get from the user)
-        stop=None, #Nr of sequences for input
-        echo=False #Return the input with output(In our case we got output and the input)
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI(
+    # The key is going to be received by .env file in the same directory
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
+userInput = input("How are you feeling today: ")
+
+
+def music_suggestion_openai(user_input):
+    returned_output = client.chat.completions.create(
+        messages=[
+            {"role": "system", "content": "You are some therapist that helps people by picking up a music based on "
+                                          "their mood, your return output should be in the following format: name of "
+                                          "music + artist or band}"},
+            {"role": "user", "content": user_input},
+        ],
+        model="gpt-4",
+        temperature=0.6
     )
-    return response.choices[0].text.strip() #parsing the part we need from the code
-'''
-def search_music_by_feeling(feeling):
-    prompt = f"Find me a song that matches the feeling: {feeling}."
-    response = openai.Completion.create(
-        engine='chat-gpt-004',
-        prompt=prompt,
-        max_tokens=100,
-        n=1,
-        stop=None,
-        temperature=0.7,
-        top_p=1.0,
-        frequency_penalty=0.0,
-        presence_penalty=0.0
-    )
+    return returned_output.choices[0].message.content  # Scripting the output that will be shown to the users
 
-    # Extract the generated song from the API response
-    generated_song = response.choices[0].text.strip().split('\n')[0]
 
-    return generated_song
-# Ask the user for their feeling
-user_input = input("How are you feeling? ")
+music_suggestion_openai(user_input=userInput)
 
-# Search for music based on the user's feeling
-recommended_song = search_music_by_feeling(user_input)
-
-print(f"Recommended song for {user_input}:")
-print(recommended_song)
-print()
-'''
 #The code here is not finished the version should be checked and also the engine response is not near
 #  close to a good response
 
