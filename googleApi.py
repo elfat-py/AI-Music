@@ -71,12 +71,8 @@
 #     #     return video_ids
 
 
-
-
-
-
-#Pretty much we are done with this file we just need better results and also we should make it happer
-#For a list of provided results to provide a list of outputs from the YouTube
+# Pretty much we are done with this file we just need better results and also we should make it happer
+# For a list of provided results to provide a list of outputs from the YouTube
 
 """""
 
@@ -170,16 +166,17 @@ youtube_api.search_for_video(query)
 import os
 from googleapiclient.discovery import build
 
+
 class YouTubeAPI:
 
     def __init__(self):
         self.api_key = os.environ.get("YOUTUBE_API_KEY")
         self.youtube = build("youtube", "v3", developerKey=self.api_key)
+        self.video_id = None
 
 
-
-    def search_videos(self, query, max_results=5):
-        # Search for videos related to the given query
+    def find_music_id(self, query, max_results=1):
+        # Search for music related to the provided name
         search_response = self.youtube.search().list(
             q=query,
             part="id,snippet",
@@ -187,25 +184,30 @@ class YouTubeAPI:
             maxResults=max_results
         ).execute()
 
-        videos = []
+        music_link = ""
 
         # Extract video details from the search response
         for search_result in search_response.get("items", []):
-            video_id = search_result["id"]["videoId"]
-            video_title = search_result["snippet"]["title"]
-            videos.append((video_title, video_id))
+            self.video_id = search_result["id"]["videoId"]
+            music_link = f"https://www.youtube.com/watch?v={self.video_id}"
 
-        return videos
-#
-# if __name__ == "__main__":
-#     parser = argparse.ArgumentParser(description="Find recent songs similar to a given song name on YouTube.")
-#     #parser.add_argument("api_key", help="Your Google Cloud API key")
-#     parser.add_argument("song_name", help="The name of the song to search for")
-#     parser.add_argument("--max-results", type=int, default=5, help="Maximum number of results to display (default: 5)")
-#     args = parser.parse_args()
-#
-#
-#
-#     song_name =
-#     max_results = args.max_results
-#
+        return music_link
+
+    def find_similar_music(self, max_results=3):
+        search_response = self.youtube.search().list(
+            relatedToVideoId=self.video_id,
+            type=["audio", "video"],
+            q=self.video_id,
+            part=["id", "snippet"],
+            maxResults=max_results
+        ).execute()
+
+        music_links = []
+
+        for search_result in search_response.get("items", []):
+            self.video_id = search_result["id"]["videoId"]
+            video_title = search_result["snippet"]["title"]
+            music_links.append((video_title, self.video_id))
+
+        return music_links
+
